@@ -1,3 +1,7 @@
+/*
+* Reading train get mean log1p of the prices and submit it
+*/
+
 import scala.io.Source.fromFile
 import scala.math.{log1p,expm1}
 import java.io.{BufferedWriter, FileWriter, File}
