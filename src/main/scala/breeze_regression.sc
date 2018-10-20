@@ -5,6 +5,8 @@
 import scala.io.Source.fromFile
 import scala.math.{log1p,expm1, sqrt}
 import java.io.{BufferedWriter, FileWriter, File}
+import breeze.linalg._
+import breeze.numerics._
 
 // number parser
 def read_number(num_string: String): Int = {
@@ -50,7 +52,7 @@ val mean_price_log = targets.sum / n_row
 rmsle_metric(targets, for (_ <- targets) yield mean_price_log)
 
 
-//
+// changing back from log1p to normal price
 val mean_price_prediction = expm1(mean_price_log)
 
 // read file iterator
