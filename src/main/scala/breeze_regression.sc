@@ -9,8 +9,8 @@ import breeze.linalg._
 import breeze.numerics._
 
 // number parser
-def read_number(num_string: String): Int = {
-  if (num_string == "NA") 0 else num_string.toInt
+def read_number(num_string: String): Double = {
+  if (num_string == "NA") 0 else num_string.toDouble
 }
 
 //Root mean square log error result
@@ -35,18 +35,22 @@ val col_indices_chosen = (for (col <- cols_chosen) yield column_map(col)).toArra
 val n_col = col_indices_chosen.length
 
 // line parser for features
-def read_line(line: String): Array[Int] = {
+def read_line(line: String): Array[Double] = {
   val line_splited = line.split(",")
   for (index <- col_indices_chosen) yield read_number(line_splited(index))
 }
 
-// read rest of lines to array
+// read rest of lines to array into features and target
 val values = (for(line <- lines) yield read_line(line)).toArray
-val n_row = values.length
+val n_rows = values.length
+
+val train = DenseMatrix((for(line <- values) yield line):_*)
+val train_features = DenseMatrix.horzcat(train(::, 0 until -1), DenseMatrix.ones[Double](n_rows, 1))
+print(train_features(0, ::))
 
 // create array of log1p of prices
-val targets = for(line <- values) yield log1p(line(n_col-1).toDouble)
-val mean_price_log = targets.sum / n_row
+val targets = for(line <- values) yield log1p(line(n_col-1))
+val mean_price_log = targets.sum / n_rows
 
 // comparing targets with an array of size target full of mean_price_log
 rmsle_metric(targets, for (_ <- targets) yield mean_price_log)
